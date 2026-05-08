@@ -21,13 +21,6 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 }
 }
 
-const weatherCorrelationData = [
-  { factor: 'Heavy Rain', impact: 85, color: '#3b82f6' },
-  { factor: 'Heatwave', impact: 65, color: '#f59e0b' },
-  { factor: 'Storms', impact: 45, color: '#06b6d4' },
-  { factor: 'Drought', impact: 92, color: '#f43f5e' },
-  { factor: 'Frost', impact: 30, color: '#8b5cf6' },
-]
 
 const Market = () => {
   return (
@@ -61,9 +54,9 @@ const Market = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 gap-6 mb-8">
         {/* Main Chart Section */}
-        <motion.div className="lg:col-span-2" variants={itemVariants} initial="hidden" animate="visible">
+        <motion.div className="lg:col-span-3" variants={itemVariants} initial="hidden" animate="visible">
           <GlassCard className="p-6 h-full" hoverEffect={false}>
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold flex items-center gap-2">
@@ -76,7 +69,7 @@ const Market = () => {
               </select>
             </div>
 
-            <div className="h-[350px]">
+            <div className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={trendData}>
                   <defs>
@@ -105,50 +98,6 @@ const Market = () => {
             </div>
           </GlassCard>
         </motion.div>
-
-        {/* Hazard Impact Widget */}
-        <motion.div variants={itemVariants} initial="hidden" animate="visible">
-          <GlassCard className="p-6 h-full" hoverEffect={false}>
-            <h3 className="text-xl font-bold flex items-center gap-2 mb-6">
-              <Zap className="w-5 h-5 text-amber-400" />
-              Hazard Impact Meter
-            </h3>
-
-            <div className="space-y-6">
-              {weatherCorrelationData.map((data, idx) => (
-                <div key={data.factor}>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium text-white/80">{data.factor}</span>
-                    <span className="text-xs font-bold" style={{ color: data.color }}>{data.impact}% Impact</span>
-                  </div>
-                  <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${data.impact}%` }}
-                      transition={{ duration: 1, delay: 0.5 + idx * 0.1 }}
-                      className="h-full rounded-full"
-                      style={{ backgroundColor: data.color }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 pt-6 border-t border-white/10">
-              <h4 className="text-sm font-bold mb-3 uppercase tracking-wider text-muted">Current Weather Risks</h4>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 p-2 rounded-lg bg-red-500/5 border border-red-500/10">
-                  <CloudRain className="w-4 h-4 text-red-400" />
-                  <span className="text-xs font-medium">Flooding in coastal routes (High Risk)</span>
-                </div>
-                <div className="flex items-center gap-3 p-2 rounded-lg bg-amber-500/5 border border-amber-500/10">
-                  <Sun className="w-4 h-4 text-amber-400" />
-                  <span className="text-xs font-medium">Heatwave in production belt (Medium Risk)</span>
-                </div>
-              </div>
-            </div>
-          </GlassCard>
-        </motion.div>
       </div>
 
       {/* Commodity Market Grid */}
@@ -168,42 +117,46 @@ const Market = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {commodityPrices.map((item) => (
-            <motion.div key={item.id} variants={itemVariants}>
-              <GlassCard className="p-0 overflow-hidden group">
-                <div className="p-5">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-primary border border-white/10 group-hover:border-primary/30 transition-colors">
-                      <TrendingUp className="w-6 h-6" />
+          {commodityPrices
+            .filter(item => 
+              ['Petroleum', 'LPG', 'Gold', 'Crude Oil', 'Silver', 'Semiconductors'].includes(item.name)
+            )
+            .map((item) => (
+              <motion.div key={item.id} variants={itemVariants}>
+                <GlassCard className="p-0 overflow-hidden group">
+                  <div className="p-5">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-primary border border-white/10 group-hover:border-primary/30 transition-colors">
+                        <TrendingUp className="w-6 h-6" />
+                      </div>
+                      <div className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full ${item.trend === 'up' ? 'text-red-400 bg-red-500/10' : 'text-emerald-400 bg-emerald-500/10'}`}>
+                        {item.trend === 'up' ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+                        {item.change}
+                      </div>
                     </div>
-                    <div className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full ${item.trend === 'up' ? 'text-red-400 bg-red-500/10' : 'text-emerald-400 bg-emerald-500/10'}`}>
-                      {item.trend === 'up' ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                      {item.change}
+                    <h3 className="text-lg font-bold mb-1">{item.name}</h3>
+                    <div className="flex items-baseline gap-2 mb-4">
+                      <span className="text-2xl font-bold">{item.price}</span>
+                      <span className="text-xs text-muted">/ Unit</span>
                     </div>
-                  </div>
-                  <h3 className="text-lg font-bold mb-1">{item.name}</h3>
-                  <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-2xl font-bold">{item.price}</span>
-                    <span className="text-xs text-muted">/ Unit</span>
-                  </div>
 
-                  <div className="space-y-3 pt-4 border-t border-white/5">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-muted">Supply Risk</span>
-                      <span className={item.status === 'danger' ? 'text-red-400' : 'text-emerald-400'}>{item.status.toUpperCase()}</span>
-                    </div>
-                    <div className="h-1 bg-white/5 rounded-full">
-                      <div className={`h-full rounded-full ${item.status === 'danger' ? 'w-4/5 bg-red-400' : 'w-1/4 bg-emerald-400'}`} />
+                    <div className="space-y-3 pt-4 border-t border-white/5">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-muted">Supply Risk</span>
+                        <span className={item.status === 'danger' ? 'text-red-400' : 'text-emerald-400'}>{item.status.toUpperCase()}</span>
+                      </div>
+                      <div className="h-1 bg-white/5 rounded-full">
+                        <div className={`h-full rounded-full ${item.status === 'danger' ? 'w-4/5 bg-red-400' : 'w-1/4 bg-emerald-400'}`} />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="bg-white/5 p-3 flex justify-between items-center px-5">
-                  <span className="text-[10px] uppercase font-bold text-muted tracking-widest">AI Summary</span>
-                  <button className="text-[10px] text-primary font-bold hover:underline">VIEW INSIGHTS</button>
-                </div>
-              </GlassCard>
-            </motion.div>
-          ))}
+                  <div className="bg-white/5 p-3 flex justify-between items-center px-5">
+                    <span className="text-[10px] uppercase font-bold text-muted tracking-widest">AI Summary</span>
+                    <button className="text-[10px] text-primary font-bold hover:underline">VIEW INSIGHTS</button>
+                  </div>
+                </GlassCard>
+              </motion.div>
+            ))}
         </div>
       </motion.div>
     </div>
