@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion'
-import { 
-  BarChart2, CloudRain, Sun, Wind, Thermometer, 
+import {
+  BarChart2, CloudRain, Sun, Wind, Thermometer,
   TrendingUp, AlertTriangle, Info, Search, Filter,
   ArrowUpRight, ArrowDownRight, Zap
 } from 'lucide-react'
-import { 
-  ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, 
+import {
+  ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip,
   CartesianGrid, BarChart, Bar, Cell, LineChart, Line
 } from 'recharts'
 import GlassCard from '../components/ui/GlassCard'
@@ -33,7 +33,7 @@ const Market = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6">
       {/* Header */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-10"
@@ -50,8 +50,8 @@ const Market = () => {
       <div className="flex flex-wrap gap-4 mb-8">
         <div className="relative flex-1 min-w-[300px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Search commodities, regions, or crisis types..."
             className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white outline-none focus:border-primary/50 transition-all"
           />
@@ -67,7 +67,7 @@ const Market = () => {
           <GlassCard className="p-6 h-full" hoverEffect={false}>
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold flex items-center gap-2">
-                <BarChart2 className="w-5 h-5 text-primary" /> 
+                <BarChart2 className="w-5 h-5 text-primary" />
                 Historical Correlation Analysis
               </h3>
               <select className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm outline-none">
@@ -75,28 +75,28 @@ const Market = () => {
                 <option>Wheat vs Drought Index</option>
               </select>
             </div>
-            
+
             <div className="h-[350px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={trendData}>
                   <defs>
                     <linearGradient id="marketGlow" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} />
                   <YAxis hide />
-                  <Tooltip 
-                    contentStyle={{backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px'}}
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
                   />
                   <Area type="monotone" dataKey="price" stroke="#3b82f6" strokeWidth={3} fill="url(#marketGlow)" />
                   <Line type="monotone" dataKey="predicted" stroke="#8b5cf6" strokeDasharray="5 5" strokeWidth={2} dot={false} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-            
+
             <div className="mt-6 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10 flex items-start gap-3">
               <Info className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
               <p className="text-sm text-white/70 italic">
@@ -113,21 +113,21 @@ const Market = () => {
               <Zap className="w-5 h-5 text-amber-400" />
               Hazard Impact Meter
             </h3>
-            
+
             <div className="space-y-6">
               {weatherCorrelationData.map((data, idx) => (
                 <div key={data.factor}>
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-medium text-white/80">{data.factor}</span>
-                    <span className="text-xs font-bold" style={{color: data.color}}>{data.impact}% Impact</span>
+                    <span className="text-xs font-bold" style={{ color: data.color }}>{data.impact}% Impact</span>
                   </div>
                   <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                    <motion.div 
+                    <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${data.impact}%` }}
                       transition={{ duration: 1, delay: 0.5 + idx * 0.1 }}
                       className="h-full rounded-full"
-                      style={{backgroundColor: data.color}}
+                      style={{ backgroundColor: data.color }}
                     />
                   </div>
                 </div>
@@ -152,7 +152,7 @@ const Market = () => {
       </div>
 
       {/* Commodity Market Grid */}
-      <motion.div 
+      <motion.div
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
@@ -162,8 +162,8 @@ const Market = () => {
         <div className="flex justify-between items-end mb-6">
           <h2 className="text-2xl font-bold">Commodity Status</h2>
           <div className="flex gap-2">
-             <button className="px-3 py-1 text-xs rounded-full bg-white/10 text-white font-medium border border-white/5">Grid View</button>
-             <button className="px-3 py-1 text-xs rounded-full text-muted font-medium hover:text-white">List View</button>
+            <button className="px-3 py-1 text-xs rounded-full bg-white/10 text-white font-medium border border-white/5">Grid View</button>
+            <button className="px-3 py-1 text-xs rounded-full text-muted font-medium hover:text-white">List View</button>
           </div>
         </div>
 
@@ -186,7 +186,7 @@ const Market = () => {
                     <span className="text-2xl font-bold">{item.price}</span>
                     <span className="text-xs text-muted">/ Unit</span>
                   </div>
-                  
+
                   <div className="space-y-3 pt-4 border-t border-white/5">
                     <div className="flex justify-between text-xs">
                       <span className="text-muted">Supply Risk</span>
