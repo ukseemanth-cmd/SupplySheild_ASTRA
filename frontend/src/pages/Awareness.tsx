@@ -84,62 +84,6 @@ const Awareness = () => {
         </p>
       </motion.div>
 
-      {/* Hero Section: Preparedness Score */}
-      <motion.div
-        variants={itemVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        className="mb-16"
-      >
-        <GlassCard className="p-8 md:p-12 bg-gradient-to-br from-blue-600/10 via-background to-purple-600/10 border-white/10 overflow-hidden relative">
-          <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold mb-6">
-                <ShieldCheck className="w-4 h-4" />
-                HOUSEHOLD READINESS
-              </div>
-              <h2 className="text-3xl font-bold mb-4">Calculate Your Crisis Preparedness Score</h2>
-              <p className="text-muted mb-8">
-                Answer a few questions about your stock of essentials, local alternative sources, and emergency funds to see how well you can withstand a 30-day supply chain breakdown.
-              </p>
-              <button className="btn btn-primary px-8">
-                Start Quiz <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="flex justify-center">
-              <div className="relative w-48 h-48">
-                <svg className="w-full h-full -rotate-90">
-                  <circle
-                    cx="96" cy="96" r="88"
-                    className="stroke-white/5 fill-none"
-                    strokeWidth="12"
-                  />
-                  <motion.circle
-                    cx="96" cy="96" r="88"
-                    className="stroke-primary fill-none"
-                    strokeWidth="12"
-                    strokeDasharray="552.9"
-                    initial={{ strokeDashoffset: 552.9 }}
-                    whileInView={{ strokeDashoffset: 552.9 * (1 - 0.65) }}
-                    transition={{ duration: 1.5, delay: 0.5 }}
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-4xl font-black">65%</span>
-                  <span className="text-[10px] uppercase font-bold text-muted tracking-widest">Global Avg</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Decorative background elements */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-0 translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl -z-0 -translate-x-1/2 translate-y-1/2" />
-        </GlassCard>
-      </motion.div>
-
       {/* Live Intelligence Section (Real News API) */}
       <section className="mb-16">
         <div className="flex items-center gap-3 mb-8">
@@ -326,15 +270,6 @@ const Awareness = () => {
         </div>
       </section>
 
-      {/* Footer Info */}
-      <div className="text-center pb-20">
-        <HelpCircle className="w-10 h-10 text-muted mx-auto mb-4 opacity-20" />
-        <h3 className="text-xl font-bold mb-2 opacity-50">Still have questions?</h3>
-        <p className="text-muted mb-8 opacity-50">Join our community discussions on the Locality page.</p>
-        <button className="btn btn-outline px-10">
-          Visit FAQ Center
-        </button>
-      </div>
     </div>
   )
 }

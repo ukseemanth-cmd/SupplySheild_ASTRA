@@ -75,32 +75,6 @@ const Home = () => {
               View Alerts
             </Link>
           </motion.div>
-
-          {/* Floating stat cards */}
-          <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="hidden xl:block absolute top-32 -left-4 animate-float"
-          >
-            <div className="glass-card w-52 p-4 border-blue-500/20">
-              <p className="text-[10px] text-muted font-bold uppercase tracking-widest mb-1">Market Sentiment</p>
-              <p className="text-xl font-bold text-emerald-400">Cautiously Stable</p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            className="hidden xl:block absolute top-44 -right-4 animate-float"
-            style={{ animationDelay: '1.5s' }}
-          >
-            <div className="glass-card w-52 p-4 border-red-500/20">
-              <p className="text-[10px] text-muted font-bold uppercase tracking-widest mb-1">Active Crises</p>
-              <p className="text-xl font-bold text-red-400">8 Worldwide</p>
-            </div>
-          </motion.div>
         </section>
 
         {/* ===== LIVE METRICS ===== */}

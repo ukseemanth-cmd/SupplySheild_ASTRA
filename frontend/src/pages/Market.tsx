@@ -122,7 +122,7 @@ Provide: 1) Why prices moved this way 2) Key risk factors for 2026 3) One action
       {/* Detail Modal */}
       <AnimatePresence>
         {selectedCommodity && selected && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[60] flex items-center justify-center py-20 px-4">
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="absolute inset-0 bg-background/85 backdrop-blur-sm"
@@ -132,7 +132,7 @@ Provide: 1) Why prices moved this way 2) Key risk factors for 2026 3) One action
               initial={{ opacity: 0, scale: 0.92, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 30 }}
-              className="relative w-full max-w-5xl max-h-[92vh] bg-background border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+              className="relative w-full max-w-5xl max-h-[80vh] bg-background border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col z-[1]"
             >
               {/* Modal Header */}
               <div className="p-6 border-b border-white/10 flex justify-between items-center bg-white/[0.02]">
@@ -159,7 +159,10 @@ Provide: 1) Why prices moved this way 2) Key risk factors for 2026 3) One action
                     </div>
                   </div>
                 </div>
-                <button onClick={() => setSelectedCommodity(null)} className="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
+                <button 
+                  onClick={() => setSelectedCommodity(null)} 
+                  className="relative z-10 p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                >
                   <X className="w-6 h-6" />
                 </button>
               </div>

@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Bell, Menu, X, Activity, BarChart2, AlertCircle,
-  Globe, ShieldCheck, User, Zap
+  Globe, ShieldCheck, Zap
 } from 'lucide-react'
 import { cn } from '../../lib/utils'
 
@@ -49,7 +49,7 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-4">
             {navLinks.map((link) => {
               const Icon = link.icon
               const isActive = location.pathname === link.path
@@ -68,10 +68,6 @@ const Navbar = () => {
 
           {/* Right Actions */}
           <div className="flex items-center gap-2">
-
-            <button className="btn-icon hidden sm:flex" id="user-profile">
-              <User className="w-5 h-5" />
-            </button>
 
             {/* Mobile menu button */}
             <button

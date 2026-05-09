@@ -4,7 +4,7 @@ import Globe from 'react-globe.gl'
 import { 
   X, Send, MapPin, AlertTriangle, MessageSquare, 
   ThumbsUp, Share2, Info, ChevronRight, PenLine, 
-  PlusCircle, Search, Filter, Globe as GlobeIcon,
+  PlusCircle, Globe as GlobeIcon,
   CheckCircle, ShieldAlert
 } from 'lucide-react'
 import GlassCard from '../components/ui/GlassCard'
@@ -17,6 +17,9 @@ const Locality = () => {
   const [activeTab, setActiveTab] = useState<'insights' | 'report'>('insights')
   const [isAutoRotate, setIsAutoRotate] = useState(true)
   const [globeReady, setGlobeReady] = useState(false)
+  const [regionInput, setRegionInput] = useState('')
+  const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [reviewMarkers, setReviewMarkers] = useState<{ lat: number; lng: number; label: string }[]>([])
 
   useEffect(() => {
     if (globeEl.current) {
@@ -41,11 +44,25 @@ const Locality = () => {
     }))
   }, [])
 
+  // Green review markers for the globe
+  const reviewGlobeData = useMemo(() => {
+    return reviewMarkers.map(marker => ({
+      lat: marker.lat,
+      lng: marker.lng,
+      size: 0.8,
+      color: '#22c55e',
+      label: `✅ ${marker.label}`
+    }))
+  }, [reviewMarkers])
+
+  const allGlobeData = useMemo(() => [...globeData, ...reviewGlobeData], [globeData, reviewGlobeData])
+
   const handlePointClick = (point: any) => {
     setIsAutoRotate(false)
     setSelectedEvent(point)
     setIsModalOpen(true)
     setActiveTab('insights')
+    setSubmitSuccess(false)
   }
 
   const handleGlobeClick = ({ lat, lng }: { lat: number, lng: number }) => {
@@ -55,8 +72,26 @@ const Locality = () => {
       lat, 
       lng 
     })
+    setRegionInput('')
     setIsModalOpen(true)
     setActiveTab('report')
+    setSubmitSuccess(false)
+  }
+
+  const handleSubmitReport = () => {
+    const lat = selectedEvent?.lat ?? 20.5
+    const lng = selectedEvent?.lng ?? 78.9
+    const label = regionInput || selectedEvent?.label || 'Unknown Region'
+
+    // Add green marker
+    setReviewMarkers(prev => [...prev, { lat, lng, label }])
+
+    // Show success
+    setSubmitSuccess(true)
+    setTimeout(() => {
+      setSubmitSuccess(false)
+      setIsModalOpen(false)
+    }, 2500)
   }
 
   return (
@@ -71,7 +106,7 @@ const Locality = () => {
           backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
           onGlobeClick={handleGlobeClick}
           onPointClick={handlePointClick}
-          ringsData={globeData}
+          ringsData={allGlobeData}
           ringColor={(d: any) => d.color}
           ringMaxRadius={5}
           ringPropagationSpeed={2}
@@ -83,28 +118,8 @@ const Locality = () => {
 
       {/* UI Overlay */}
       <div className="absolute inset-0 z-10 pointer-events-none">
-        {/* Left Panel: Search & Controls */}
+        {/* Left Panel: Crisis Intensity */}
         <div className="absolute top-8 left-8 w-80 space-y-4 pointer-events-auto">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <GlassCard className="p-4 border-white/10">
-              <div className="relative mb-4">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
-                <input 
-                  type="text" 
-                  placeholder="Locate crisis..."
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2 pl-9 pr-3 text-sm outline-none focus:border-primary/50"
-                />
-              </div>
-              <div className="flex gap-2">
-                 <button className="flex-1 py-2 text-xs font-bold bg-primary rounded-lg">LIVE FEED</button>
-                 <button className="flex-1 py-2 text-xs font-bold bg-white/5 border border-white/10 rounded-lg">REGIONS</button>
-              </div>
-            </GlassCard>
-          </motion.div>
-
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -131,13 +146,35 @@ const Locality = () => {
             </GlassCard>
           </motion.div>
 
+          {/* Review markers legend */}
+          {reviewMarkers.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+            >
+              <GlassCard className="p-4 border-emerald-500/10">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-3">
+                  ✅ Your Reviews ({reviewMarkers.length})
+                </h3>
+                <div className="space-y-2">
+                  {reviewMarkers.slice(-3).map((m, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <span className="text-xs text-white/80 truncate">{m.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </GlassCard>
+            </motion.div>
+          )}
+
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
           >
             <button 
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => { setIsModalOpen(true); setSubmitSuccess(false) }}
               className="w-full btn btn-primary py-4 shadow-xl shadow-primary/20 pointer-events-auto"
             >
               <PlusCircle className="w-5 h-5" /> REPORT CRISIS
@@ -297,66 +334,87 @@ const Locality = () => {
                   </div>
                 ) : (
                   <div className="max-w-2xl mx-auto space-y-6">
-                     <div className="text-center mb-8">
-                        <PenLine className="w-10 h-10 text-primary mx-auto mb-4" />
-                        <h3 className="text-xl font-bold">Submit Local Intelligence</h3>
-                        <p className="text-sm text-muted">Your observations help thousands make better decisions.</p>
-                     </div>
-
-                     <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                           <div className="space-y-2">
-                              <label className="text-xs font-bold text-muted uppercase">Report Category</label>
-                              <select className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm outline-none focus:border-primary/50">
-                                 <option>Locality News</option>
-                                 <option>Product Shortage</option>
-                                 <option>Price Hike / Crisis</option>
-                                 <option>Natural Disaster</option>
-                                 <option>Logistics Strike</option>
-                                 <option>Local Observation</option>
-                              </select>
+                     {/* Success Message */}
+                     <AnimatePresence>
+                       {submitSuccess && (
+                         <motion.div
+                           initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                           animate={{ opacity: 1, y: 0, scale: 1 }}
+                           exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                           className="p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-4"
+                         >
+                           <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                             <CheckCircle className="w-6 h-6 text-emerald-400" />
                            </div>
-                           <div className="space-y-2">
-                              <label className="text-xs font-bold text-muted uppercase">Severity Level</label>
-                              <select className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm outline-none focus:border-primary/50">
-                                 <option>Low - Minor Delay</option>
-                                 <option>Medium - Noticeable Hike</option>
-                                 <option>High - Severe Shortage</option>
-                                 <option>Critical - Emergency</option>
-                              </select>
+                           <div>
+                             <p className="text-base font-bold text-emerald-400">Review Uploaded Successfully!</p>
+                             <p className="text-xs text-emerald-400/70">Your report has been added to the globe. A green marker has been placed at the location.</p>
                            </div>
-                        </div>
+                         </motion.div>
+                       )}
+                     </AnimatePresence>
 
-                        <div className="space-y-2">
-                           <label className="text-xs font-bold text-muted uppercase">Incident Location</label>
-                            <input 
-                               type="text" 
-                               placeholder="City, State, or Coordinates..."
-                               value={selectedEvent ? `${selectedEvent.lat.toFixed(4)}, ${selectedEvent.lng.toFixed(4)}` : ''}
-                               readOnly
-                               className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm outline-none focus:border-primary/50 text-muted cursor-not-allowed"
-                            />
-                        </div>
+                     {!submitSuccess && (
+                       <>
+                         <div className="text-center mb-8">
+                            <PenLine className="w-10 h-10 text-primary mx-auto mb-4" />
+                            <h3 className="text-xl font-bold">Submit Local Intelligence</h3>
+                            <p className="text-sm text-muted">Your observations help thousands make better decisions.</p>
+                         </div>
 
-                        <div className="space-y-2">
-                           <label className="text-xs font-bold text-muted uppercase">Intelligence Details</label>
-                            <textarea 
-                              rows={5}
-                              placeholder="Write your locality news or share observations here. Be specific about shortages, price changes, or any ongoing crisis/disaster..."
-                              className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm outline-none focus:border-primary/50 resize-none"
-                            />
-                        </div>
+                         <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                               <div className="space-y-2">
+                                  <label className="text-xs font-bold text-muted uppercase">Report Category</label>
+                                  <select className="w-full bg-[#0e0e12] border border-white/10 rounded-xl p-3 text-sm text-white/90 outline-none focus:border-primary/50 appearance-none" style={{ colorScheme: 'dark' }}>
+                                     <option className="bg-[#0e0e12] text-white/90">Locality News</option>
+                                     <option className="bg-[#0e0e12] text-white/90">Product Shortage</option>
+                                     <option className="bg-[#0e0e12] text-white/90">Price Hike / Crisis</option>
+                                     <option className="bg-[#0e0e12] text-white/90">Natural Disaster</option>
+                                     <option className="bg-[#0e0e12] text-white/90">Logistics Strike</option>
+                                     <option className="bg-[#0e0e12] text-white/90">Local Observation</option>
+                                  </select>
+                               </div>
+                               <div className="space-y-2">
+                                  <label className="text-xs font-bold text-muted uppercase">Severity Level</label>
+                                  <select className="w-full bg-[#0e0e12] border border-white/10 rounded-xl p-3 text-sm text-white/90 outline-none focus:border-primary/50 appearance-none" style={{ colorScheme: 'dark' }}>
+                                     <option className="bg-[#0e0e12] text-white/90">Low - Minor Delay</option>
+                                     <option className="bg-[#0e0e12] text-white/90">Medium - Noticeable Hike</option>
+                                     <option className="bg-[#0e0e12] text-white/90">High - Severe Shortage</option>
+                                     <option className="bg-[#0e0e12] text-white/90">Critical - Emergency</option>
+                                  </select>
+                               </div>
+                            </div>
 
-                        <div className="p-4 rounded-2xl bg-white/5 border-2 border-dashed border-white/10 flex flex-col items-center justify-center text-center py-8 group hover:border-primary/30 transition-colors cursor-pointer">
-                           <Info className="w-8 h-8 text-muted mb-2 group-hover:text-primary transition-colors" />
-                           <p className="text-sm font-bold mb-1">Upload Field Photos</p>
-                           <p className="text-[10px] text-muted uppercase tracking-widest">Max 10MB · JPG/PNG</p>
-                        </div>
+                            <div className="space-y-2">
+                               <label className="text-xs font-bold text-muted uppercase">Region</label>
+                                <input 
+                                   type="text" 
+                                   placeholder="Enter your region (e.g. Mumbai, Maharashtra)"
+                                   value={regionInput}
+                                   onChange={(e) => setRegionInput(e.target.value)}
+                                   className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm outline-none focus:border-primary/50 text-white placeholder:text-muted"
+                                />
+                            </div>
 
-                        <button className="w-full btn btn-primary py-4 text-base mt-4">
-                           <Send className="w-5 h-5" /> BROADCAST REPORT
-                        </button>
-                     </div>
+                            <div className="space-y-2">
+                               <label className="text-xs font-bold text-muted uppercase">Intelligence Details</label>
+                                <textarea 
+                                  rows={5}
+                                  placeholder="Write your locality news or share observations here. Be specific about shortages, price changes, or any ongoing crisis/disaster..."
+                                  className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm outline-none focus:border-primary/50 resize-none"
+                                />
+                            </div>
+
+                            <button 
+                              onClick={handleSubmitReport}
+                              className="w-full btn btn-primary py-4 text-base mt-4"
+                            >
+                               <Send className="w-5 h-5" /> BROADCAST REPORT
+                            </button>
+                         </div>
+                       </>
+                     )}
                   </div>
                 )}
               </div>
