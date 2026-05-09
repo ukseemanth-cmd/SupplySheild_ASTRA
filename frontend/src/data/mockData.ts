@@ -1,105 +1,194 @@
+// ===== COMMODITY PRICES =====
 export const commodityPrices = [
-  { id: '1', name: 'Petroleum', price: '₹101.2', change: '+1.2%', trend: 'up' as const, status: 'warning' as const, icon: 'Fuel' as const, sparkline: [40,42,41,45,48,47,50] },
-  { id: '2', name: 'LPG', price: '₹950.0', change: '+0.5%', trend: 'up' as const, status: 'warning' as const, icon: 'Flame' as const, sparkline: [90,89,91,92,93,94,95] },
-  { id: '3', name: 'Gold', price: '₹62,450', change: '+2.8%', trend: 'up' as const, status: 'danger' as const, icon: 'Gem' as const, sparkline: [58,59,60,59,61,62,62.4] },
-  { id: '4', name: 'Crude Oil', price: '$82.4', change: '-1.3%', trend: 'down' as const, status: 'success' as const, icon: 'Droplets' as const, sparkline: [86,85,84,83,83,82,82] },
-  { id: '5', name: 'Silver', price: '₹74,200', change: '+1.5%', trend: 'up' as const, status: 'warning' as const, icon: 'CircleDollarSign' as const, sparkline: [70,71,72,71,73,74,74.2] },
-  { id: '9', name: 'Medicines', price: '₹Index 112', change: '+3.1%', trend: 'up' as const, status: 'warning' as const, icon: 'Pill' as const, sparkline: [100,102,105,107,109,111,112] },
-  { id: '10', name: 'Semiconductors', price: '$Index 145', change: '-0.8%', trend: 'down' as const, status: 'success' as const, icon: 'Cpu' as const, sparkline: [150,149,148,147,146,145,145] },
-  { id: '11', name: 'EV Batteries', price: '$132/kWh', change: '-4.2%', trend: 'down' as const, status: 'success' as const, icon: 'Battery' as const, sparkline: [142,140,138,136,134,133,132] },
+  { id: 'petrol', name: 'Petrol', price: '₹108.2/L', change: '+3.2%', trend: 'up' as const, status: 'danger' as const, icon: 'Fuel', sparkline: [95,97,99,101,103,105,106,108] },
+  { id: 'lpg', name: 'LPG Cylinder', price: '₹903', change: '+1.5%', trend: 'up' as const, status: 'warning' as const, icon: 'Flame', sparkline: [850,860,870,880,885,890,895,903] },
+  { id: 'gold', name: 'Gold (24K)', price: '₹7,842/g', change: '+5.1%', trend: 'up' as const, status: 'danger' as const, icon: 'Gem', sparkline: [7200,7350,7400,7500,7600,7700,7800,7842] },
+  { id: 'silver', name: 'Silver', price: '₹98.4/g', change: '+3.9%', trend: 'up' as const, status: 'warning' as const, icon: 'Gem', sparkline: [88,90,91,93,94,96,97,98] },
+  { id: 'semiconductors', name: 'Semiconductors', price: '$4.8/unit', change: '+6.7%', trend: 'up' as const, status: 'danger' as const, icon: 'Cpu', sparkline: [3.8,3.9,4.1,4.2,4.4,4.5,4.7,4.8] },
+  { id: 'crude', name: 'Crude Oil', price: '$82.5/bbl', change: '+4.2%', trend: 'up' as const, status: 'danger' as const, icon: 'Droplets', sparkline: [74,76,77,78,79,80,81,82] },
 ]
 
-export const trendData = [
-  { name: 'Jan', price: 40, predicted: 42 },
-  { name: 'Feb', price: 45, predicted: 44 },
-  { name: 'Mar', price: 42, predicted: 46 },
-  { name: 'Apr', price: 50, predicted: 49 },
-  { name: 'May', price: 75, predicted: 68 },
-  { name: 'Jun', price: 85, predicted: 80 },
-  { name: 'Jul', price: 65, predicted: 72 },
-  { name: 'Aug', price: null, predicted: 78 },
-  { name: 'Sep', price: null, predicted: 85 },
-  { name: 'Oct', price: null, predicted: 82 },
-]
+// ===== COMMODITY HISTORY (for Market detail charts) =====
+export const commodityHistory: Record<string, { month: string; price: number; predicted?: number; upper?: number; lower?: number }[]> = {
+  petrol: [
+    { month: 'Jan 25', price: 94 }, { month: 'Mar 25', price: 96 }, { month: 'May 25', price: 99 },
+    { month: 'Jul 25', price: 101 }, { month: 'Sep 25', price: 103 }, { month: 'Nov 25', price: 105 },
+    { month: 'Jan 26', price: 106 }, { month: 'Mar 26', price: 108 }, { month: 'May 26', price: 108.2 },
+    { month: 'Jul 26', predicted: 110, upper: 113, lower: 107 },
+    { month: 'Sep 26', predicted: 112, upper: 116, lower: 108 },
+    { month: 'Nov 26', predicted: 115, upper: 120, lower: 110 },
+    { month: 'Dec 26', predicted: 117, upper: 123, lower: 111 },
+  ],
+  lpg: [
+    { month: 'Jan 25', price: 820 }, { month: 'Mar 25', price: 835 }, { month: 'May 25', price: 850 },
+    { month: 'Jul 25', price: 862 }, { month: 'Sep 25', price: 875 }, { month: 'Nov 25', price: 885 },
+    { month: 'Jan 26', price: 890 }, { month: 'Mar 26', price: 895 }, { month: 'May 26', price: 903 },
+    { month: 'Jul 26', predicted: 915, upper: 935, lower: 895 },
+    { month: 'Sep 26', predicted: 928, upper: 955, lower: 900 },
+    { month: 'Nov 26', predicted: 940, upper: 970, lower: 910 },
+    { month: 'Dec 26', predicted: 950, upper: 985, lower: 915 },
+  ],
+  gold: [
+    { month: 'Jan 25', price: 6800 }, { month: 'Mar 25', price: 7000 }, { month: 'May 25', price: 7200 },
+    { month: 'Jul 25', price: 7350 }, { month: 'Sep 25', price: 7500 }, { month: 'Nov 25', price: 7600 },
+    { month: 'Jan 26', price: 7700 }, { month: 'Mar 26', price: 7800 }, { month: 'May 26', price: 7842 },
+    { month: 'Jul 26', predicted: 8000, upper: 8300, lower: 7700 },
+    { month: 'Sep 26', predicted: 8200, upper: 8600, lower: 7800 },
+    { month: 'Nov 26', predicted: 8400, upper: 8900, lower: 7900 },
+    { month: 'Dec 26', predicted: 8500, upper: 9100, lower: 7950 },
+  ],
+  silver: [
+    { month: 'Jan 25', price: 82 }, { month: 'Mar 25', price: 84 }, { month: 'May 25', price: 87 },
+    { month: 'Jul 25', price: 89 }, { month: 'Sep 25', price: 91 }, { month: 'Nov 25', price: 94 },
+    { month: 'Jan 26', price: 95 }, { month: 'Mar 26', price: 97 }, { month: 'May 26', price: 98.4 },
+    { month: 'Jul 26', predicted: 101, upper: 106, lower: 96 },
+    { month: 'Sep 26', predicted: 104, upper: 110, lower: 98 },
+    { month: 'Nov 26', predicted: 106, upper: 113, lower: 99 },
+    { month: 'Dec 26', predicted: 108, upper: 116, lower: 100 },
+  ],
+  semiconductors: [
+    { month: 'Jan 25', price: 3.2 }, { month: 'Mar 25', price: 3.4 }, { month: 'May 25', price: 3.6 },
+    { month: 'Jul 25', price: 3.8 }, { month: 'Sep 25', price: 4.0 }, { month: 'Nov 25', price: 4.2 },
+    { month: 'Jan 26', price: 4.3 }, { month: 'Mar 26', price: 4.5 }, { month: 'May 26', price: 4.8 },
+    { month: 'Jul 26', predicted: 5.1, upper: 5.5, lower: 4.7 },
+    { month: 'Sep 26', predicted: 5.4, upper: 5.9, lower: 4.9 },
+    { month: 'Nov 26', predicted: 5.6, upper: 6.2, lower: 5.0 },
+    { month: 'Dec 26', predicted: 5.8, upper: 6.5, lower: 5.1 },
+  ],
+  crude: [
+    { month: 'Jan 25', price: 72 }, { month: 'Mar 25', price: 74 }, { month: 'May 25', price: 76 },
+    { month: 'Jul 25', price: 77 }, { month: 'Sep 25', price: 78 }, { month: 'Nov 25', price: 80 },
+    { month: 'Jan 26', price: 81 }, { month: 'Mar 26', price: 82 }, { month: 'May 26', price: 82.5 },
+    { month: 'Jul 26', predicted: 84, upper: 88, lower: 80 },
+    { month: 'Sep 26', predicted: 86, upper: 91, lower: 81 },
+    { month: 'Nov 26', predicted: 88, upper: 94, lower: 82 },
+    { month: 'Dec 26', predicted: 89, upper: 96, lower: 83 },
+  ],
+}
 
+
+// ===== FEATURES =====
 export const features = [
-  { title: 'Crisis Price Alerts', description: 'Real-time notifications before prices surge due to wars, floods, or trade restrictions.', icon: 'AlertTriangle' },
-  { title: 'AI Explanation Engine', description: 'Understand the "Why" behind price changes with clear AI-generated insights.', icon: 'Cpu' },
-  { title: 'Global Supply Mapping', description: 'Interactive globe showing crisis hotspots and their impact on commodity flows.', icon: 'Globe' },
-  { title: 'Shortage Prediction', description: 'ML-powered forecasting of shortages before they hit your region.', icon: 'TrendingUp' },
-  { title: 'Weather Impact Analysis', description: 'Track floods, droughts, and storms impacting essential commodity supply chains.', icon: 'CloudRain' },
+  { title: 'Real-Time Crisis Mapping', description: 'Track global supply chain disruptions on an interactive 3D globe with live crisis hotspots, severity indicators, and community-verified field reports.', icon: 'Globe' },
+  { title: 'AI Price Prediction', description: 'Our LSTM neural network trained on historical commodity data forecasts price fluctuations up to 4 months ahead with 88% confidence.', icon: 'Cpu' },
+  { title: 'Smart Alerts', description: 'Get instant notifications when our AI detects price spikes, shortages, or supply chain disruptions that could affect your region.', icon: 'AlertTriangle' },
+  { title: 'Trend Analysis', description: 'Deep-dive into historical price trends with interactive charts, seasonal patterns, and correlation analysis across commodities.', icon: 'TrendingUp' },
+  { title: 'Weather Impact', description: 'Monitor how monsoons, cyclones, and climate events ripple through agricultural supply chains and impact food prices.', icon: 'CloudRain' },
+  { title: 'Verified Intelligence', description: 'Community-sourced reports verified by AI cross-referencing ensure you get accurate, on-the-ground information.', icon: 'ShieldCheck' },
 ]
 
+// ===== CRISIS ALERTS =====
 export const crisisAlerts = [
-  { id: 1, title: 'Red Sea Shipping Crisis', severity: 'critical' as const, region: 'Middle East', commodity: 'Crude Oil', impact: '+12% price risk', time: '2h ago', description: 'Houthi attacks on cargo ships are disrupting 12% of global trade through the Suez Canal.' },
-  { id: 2, title: 'Brazil Drought Emergency', severity: 'high' as const, region: 'South America', commodity: 'Coffee, Soybeans', impact: '+8% price risk', time: '5h ago', description: 'Worst drought in 40 years threatening major crop yields across southern Brazil.' },
-  { id: 3, title: 'Taiwan Strait Tensions', severity: 'high' as const, region: 'East Asia', commodity: 'Semiconductors', impact: 'Supply chain risk', time: '1d ago', description: 'Military exercises near Taiwan raising concerns about semiconductor supply disruption.' },
-  { id: 5, title: 'EU Carbon Tax Phase-in', severity: 'low' as const, region: 'Europe', commodity: 'Steel, Aluminum', impact: '+3% cost increase', time: '2d ago', description: 'New carbon border adjustment mechanism increasing import costs for industrial commodities.' },
-  { id: 6, title: 'Ukraine Grain Corridor', severity: 'medium' as const, region: 'Eastern Europe', commodity: 'Wheat, Corn', impact: 'Export disruption', time: '6h ago', description: 'Black Sea grain deal uncertainties continue to affect global grain markets.' },
-  { id: 7, title: 'Myanmar Cyclone Warning', severity: 'high' as const, region: 'Southeast Asia', commodity: 'Rice', impact: '+10% shortage risk', time: '1h ago', description: 'Category 4 cyclone approaching major rice-producing regions.' },
-  { id: 8, title: 'OPEC+ Production Cut', severity: 'critical' as const, region: 'Global', commodity: 'Petroleum, LPG', impact: '+5-8% price hike', time: '4h ago', description: 'Additional 1M barrel/day voluntary production cuts announced for Q2.' },
+  { id: 'a1', title: 'Red Sea Shipping Crisis Escalates', severity: 'critical', description: 'Houthi attacks disrupting 15% of global trade through Suez Canal. Fuel & commodity shipping costs surging.', region: 'Middle East', commodity: 'Crude Oil', impact: '+12% price risk' },
+  { id: 'a2', title: 'Monsoon Flooding — Kerala & Karnataka', severity: 'high', description: 'Heavy rains destroying vegetable crops and disrupting road supply networks across southern India.', region: 'South India', commodity: 'Vegetables', impact: '+15% price risk' },
+  { id: 'a3', title: 'Russia-Ukraine Grain Export Tensions', severity: 'high', description: 'Black Sea grain corridor agreement under threat. Wheat and sunflower oil supplies at risk.', region: 'Eastern Europe', commodity: 'Wheat', impact: '+8% price risk' },
+  { id: 'a4', title: 'OPEC+ Production Cuts Extended', severity: 'medium', description: 'Saudi Arabia extends voluntary 1M barrel/day cut through Q3 2026, tightening global oil supply.', region: 'Global', commodity: 'Petrol & Diesel', impact: '+5% price risk' },
+  { id: 'a5', title: 'Onion Export Ban Lifted', severity: 'low', description: 'Government lifts export restrictions on onions. Domestic prices may stabilize as supply normalizes.', region: 'India', commodity: 'Onion', impact: 'Stabilizing' },
+  { id: 'a6', title: 'Cyclone Approaching Bay of Bengal', severity: 'critical', description: 'Category 3 cyclone expected to make landfall in Odisha. Emergency supply chain protocols activated.', region: 'East India', commodity: 'Rice & Essentials', impact: '+20% price risk' },
 ]
 
-export const globalCrisisEvents = [
-  { lat: 15.5, lng: 44.2, label: 'Red Sea Crisis', severity: 'critical', size: 1.2 },
-  { lat: -14.2, lng: -51.9, label: 'Brazil Drought', severity: 'high', size: 1.0 },
-  { lat: 23.7, lng: 120.9, label: 'Taiwan Tensions', severity: 'high', size: 0.9 },
-  { lat: 28.6, lng: 77.2, label: 'India Heatwave', severity: 'medium', size: 0.8 },
-  { lat: 48.8, lng: 2.3, label: 'EU Carbon Tax', severity: 'low', size: 0.5 },
-  { lat: 48.3, lng: 31.1, label: 'Ukraine Grain', severity: 'medium', size: 0.7 },
-  { lat: 16.8, lng: 96.2, label: 'Myanmar Cyclone', severity: 'high', size: 0.9 },
-  { lat: 24.7, lng: 46.7, label: 'OPEC+ Cuts', severity: 'critical', size: 1.1 },
-  { lat: 35.8, lng: 104.1, label: 'China Export Ban', severity: 'medium', size: 0.8 },
-  { lat: -1.2, lng: 36.8, label: 'East Africa Floods', severity: 'high', size: 0.9 },
-]
-
-export const localityReviews = [
-  { id: 1, user: 'Arjun S.', region: 'South Asia', rating: 5, comment: 'Major flooding has disrupted rice transport routes. Local markets reporting 40% shortages.', date: '2h ago', type: 'Crisis', upvotes: 42, severity: 'high' as const },
-  { id: 2, user: 'Priya K.', region: 'East Africa', rating: 4, comment: 'Drought conditions worsening. Maize prices up 60% this week.', date: '5h ago', type: 'Shortage', upvotes: 38, severity: 'critical' as const },
-  { id: 3, user: 'Rahul M.', region: 'South America', rating: 3, comment: 'Port strike entering day 14. Container shipping severely impacted.', date: '1d ago', type: 'Crisis', upvotes: 56, severity: 'high' as const },
-  { id: 4, user: 'Sofia L.', region: 'Eastern Europe', rating: 4, comment: 'Wheat corridor reopening. Supply expected to normalize within 2 weeks.', date: '2d ago', type: 'Update', upvotes: 29, severity: 'low' as const },
-  { id: 5, user: 'Chen W.', region: 'East Asia', rating: 5, comment: 'Semiconductor shortage easing in Shenzhen. New fab capacity coming online.', date: '8h ago', type: 'Update', upvotes: 33, severity: 'low' as const },
-  { id: 6, user: 'Maria G.', region: 'Central America', rating: 2, comment: 'Hurricane damage worse than expected. Coffee plantations devastated.', date: '12h ago', type: 'Disaster', upvotes: 67, severity: 'critical' as const },
-]
-
-export const awarenessCards = [
-  { title: 'What Happens When Oil Hits $100?', category: 'Scenario', icon: 'Fuel', description: 'Every $10 increase in crude oil adds ₹5-7 to petrol and ₹15-20 to LPG cylinders. Transportation costs ripple across all commodities.', impact: 'High' },
-  { title: 'Flood Impact on Food Prices', category: 'Weather', icon: 'CloudRain', description: 'Severe flooding can destroy 30-60% of crops in affected regions, causing 2-4x price spikes within 2 weeks.', impact: 'Critical' },
-  { title: 'Semiconductor Supply Chain', category: 'Geopolitical', icon: 'Cpu', description: 'Taiwan produces 60% of global semiconductors. Any disruption would affect electronics, EVs, and medical devices.', impact: 'High' },
-  { title: 'Emergency Buying Guide', category: 'Preparedness', icon: 'ShoppingCart', description: 'Stock 2 weeks of essentials. Prioritize non-perishables, medicines, and fuel. Avoid panic buying.', impact: 'Medium' },
-  { title: 'Trade War Effects on Prices', category: 'Geopolitical', icon: 'Scale', description: 'Tariff increases of 25% on imports can raise consumer prices by 5-15% within 3-6 months.', impact: 'High' },
-  { title: 'Pandemic Preparedness Score', category: 'Health', icon: 'HeartPulse', description: 'Rate your household\'s readiness for supply disruptions during health emergencies.', impact: 'Medium' },
-]
-
-export const tickerItems = [
-  '🔴 Red Sea: Shipping routes under attack — Oil +3.2%',
-  '🟡 Brazil: Severe drought — Coffee futures +8%',
-  '🔴 OPEC+: Production cuts — Brent crude $86.4',
-  '🟢 India: Monsoon on track — Rice supply stable',
-  '🟡 Taiwan: Military exercises — Chip stocks volatile',
-  '🔴 Myanmar: Cyclone Mocha — Rice exports halted',
-  '🟢 EU: New grain corridor — Wheat -2.1%',
-  '🟡 China: Rare earth export controls — EV battery costs +5%',
-]
-
+// ===== DASHBOARD METRICS =====
 export const dashboardMetrics = [
-  { label: 'Active Crises', value: '23', change: '+3', trend: 'up' as const, color: 'text-red-400' },
-  { label: 'Commodities Tracked', value: '156', change: '+12', trend: 'up' as const, color: 'text-blue-400' },
-  { label: 'AI Predictions', value: '2,847', change: '+156', trend: 'up' as const, color: 'text-purple-400' },
-  { label: 'Avg Accuracy', value: '94.2%', change: '+0.8%', trend: 'up' as const, color: 'text-emerald-400' },
+  { label: 'Active Crises', value: '8', change: '+2', color: 'text-red-400' },
+  { label: 'Commodities Tracked', value: '48', change: '+4', color: 'text-blue-400' },
+  { label: 'AI Confidence', value: '88%', change: '+3%', color: 'text-emerald-400' },
+  { label: 'Price Alerts', value: '24', change: '+6', color: 'text-amber-400' },
 ]
 
-export const aiRecommendations = [
-  { commodity: 'Petroleum', action: 'Wait' as const, reason: 'OPEC+ cuts may reverse next quarter. Expected -3% correction.', confidence: 72 },
-  { commodity: 'Gold', action: 'Buy Now' as const, reason: 'Geopolitical uncertainty driving safe-haven demand. Expected +5% in 30 days.', confidence: 85 },
-  { commodity: 'LPG', action: 'High Risk' as const, reason: 'Supply disruptions from Middle East conflict. Stock up if possible.', confidence: 88 },
+// ===== TREND DATA (Home page chart — 2026) =====
+export const trendData = [
+  { name: 'Oct 25', price: 96, predicted: null },
+  { name: 'Nov 25', price: 98, predicted: null },
+  { name: 'Dec 25', price: 100, predicted: null },
+  { name: 'Jan 26', price: 102, predicted: null },
+  { name: 'Feb 26', price: 104, predicted: 104 },
+  { name: 'Mar 26', price: 106, predicted: 105 },
+  { name: 'Apr 26', price: 108, predicted: 107 },
+  { name: 'May 26', price: 108.2, predicted: 109 },
+  { name: 'Jun 26', price: null, predicted: 110 },
+  { name: 'Jul 26', price: null, predicted: 112 },
+  { name: 'Aug 26', price: null, predicted: 115 },
+  { name: 'Sep 26', price: null, predicted: 117 },
 ]
 
-export const newsItems = [
-  { title: 'OPEC+ extends production cuts through Q3', source: 'Reuters', time: '2h ago', sentiment: 'negative' as const },
-  { title: 'India monsoon forecast: Normal rainfall expected', source: 'IMD', time: '4h ago', sentiment: 'positive' as const },
-  { title: 'Red Sea shipping costs triple amid Houthi attacks', source: 'Bloomberg', time: '6h ago', sentiment: 'negative' as const },
-  { title: 'New semiconductor fab announced in Arizona', source: 'TechCrunch', time: '8h ago', sentiment: 'positive' as const },
-  { title: 'Brazil declares emergency over record drought', source: 'AP News', time: '12h ago', sentiment: 'negative' as const },
-  { title: 'EU carbon border tax begins phased implementation', source: 'FT', time: '1d ago', sentiment: 'neutral' as const },
+// ===== TICKER =====
+export const tickerItems = [
+  '🔴 Red Sea crisis: Shipping costs +40% — May 2026',
+  '🟡 OPEC+ cuts extended through Q3 2026',
+  '🟢 India monsoon forecast favorable for Kharif crops',
+  '🔴 Cyclone alert: Bay of Bengal — supply routes at risk',
+  '🟡 Gold hits ₹7,842/g amid geopolitical tensions',
+  '🟢 Government releases buffer wheat stock — prices easing',
+  '🔴 Tomato prices surge +12% in southern markets — May 2026',
+  '🟡 LPG subsidy review pending — Q3 2026',
+]
+
+// ===== GLOBE CRISIS EVENTS =====
+export const globalCrisisEvents = [
+  { lat: 15.5, lng: 44.2, size: 1.2, severity: 'critical', label: 'Red Sea Shipping Crisis' },
+  { lat: 10.0, lng: 76.5, size: 0.9, severity: 'high', label: 'Kerala Monsoon Flooding' },
+  { lat: 48.5, lng: 35.0, size: 1.0, severity: 'high', label: 'Ukraine Grain Crisis' },
+  { lat: 24.5, lng: 45.0, size: 0.8, severity: 'medium', label: 'OPEC+ Production Cuts' },
+  { lat: 20.5, lng: 85.8, size: 1.1, severity: 'critical', label: 'Bay of Bengal Cyclone' },
+  { lat: 13.0, lng: 77.5, size: 0.7, severity: 'medium', label: 'Karnataka Drought Stress' },
+  { lat: 28.6, lng: 77.2, size: 0.6, severity: 'low', label: 'Delhi NCR Supply Stable' },
+  { lat: -1.3, lng: 36.8, size: 0.8, severity: 'high', label: 'East Africa Drought' },
+]
+
+// ===== LOCALITY REVIEWS =====
+export const localityReviews = [
+  { id: 'r1', user: 'Arjun S.', region: 'South India', date: 'May 8, 2026', type: 'Crisis', comment: 'Heavy flooding in Wayanad has completely disrupted vegetable supply routes. Tomato and onion prices doubled at local markets overnight.', upvotes: 47 },
+  { id: 'r2', user: 'Priya K.', region: 'Maharashtra', date: 'May 7, 2026', type: 'News', comment: 'Pune wholesale market seeing stabilization in wheat prices after government buffer stock release. Good sign for consumers.', upvotes: 32 },
+  { id: 'r3', user: 'Ravi M.', region: 'Tamil Nadu', date: 'May 6, 2026', type: 'Crisis', comment: 'LPG shortage in rural Madurai district. Dealers reporting 2-week wait times. People switching to firewood for cooking.', upvotes: 61 },
+  { id: 'r4', user: 'Sneha D.', region: 'Gujarat', date: 'May 5, 2026', type: 'News', comment: 'Groundnut oil prices dropping steadily in Rajkot market. Good harvest expected this season despite initial drought fears.', upvotes: 28 },
+]
+
+// ===== AWARENESS CARDS =====
+export const awarenessCards = [
+  { title: 'Oil Price & Your Kitchen', description: 'When crude oil prices rise, everything from cooking gas to transport costs increases. A $10/barrel rise can add ₹5-8 to petrol and ₹3-5 to LPG over 2-3 months.', icon: 'Fuel', impact: 'Critical', category: 'Energy' },
+  { title: 'Monsoon & Food Prices', description: 'India\'s agriculture depends 60% on monsoons. Delayed or excess rainfall can spike vegetable prices 30-50% within weeks as supply chains get disrupted.', icon: 'CloudRain', impact: 'High', category: 'Agriculture' },
+  { title: 'AI in Supply Chains', description: 'Machine learning models can predict price movements with 85-90% accuracy by analyzing weather, geopolitics, and historical patterns simultaneously.', icon: 'Cpu', impact: 'Medium', category: 'Technology' },
+  { title: 'Smart Buying Strategy', description: 'Stock up on non-perishables when prices are stable. Watch for early warning signals like transport strikes, weather alerts, and export policy changes.', icon: 'ShoppingCart', impact: 'High', category: 'Consumer' },
+  { title: 'Global Trade & Local Impact', description: 'India imports 85% of its crude oil. Any disruption in the Strait of Hormuz or Suez Canal directly impacts fuel, fertilizer, and food prices domestically.', icon: 'Scale', impact: 'Critical', category: 'Trade' },
+  { title: 'Health & Supply Crises', description: 'Pandemics and health emergencies can collapse supply chains overnight. COVID-19 showed how medicine and essential supply disruptions affect every household.', icon: 'HeartPulse', impact: 'Critical', category: 'Health' },
+]
+
+// ===== SECTOR DISTRIBUTION (for pie chart) =====
+export const sectorDistribution = [
+  { name: 'Energy', value: 35, color: '#ef4444' },
+  { name: 'Agriculture', value: 30, color: '#10b981' },
+  { name: 'Precious Metals', value: 20, color: '#f59e0b' },
+  { name: 'Essentials', value: 15, color: '#3b82f6' },
+]
+
+// ===== VOLATILITY DATA (for heatmap) =====
+export const volatilityData = [
+  { name: 'Tomato', volatility: 95, status: 'critical' },
+  { name: 'Onion', volatility: 82, status: 'high' },
+  { name: 'Petrol', volatility: 68, status: 'high' },
+  { name: 'Gold', volatility: 65, status: 'medium' },
+  { name: 'Crude Oil', volatility: 62, status: 'medium' },
+  { name: 'Diesel', volatility: 55, status: 'medium' },
+  { name: 'LPG', volatility: 48, status: 'medium' },
+  { name: 'Silver', volatility: 45, status: 'medium' },
+  { name: 'Eggs', volatility: 30, status: 'low' },
+  { name: 'Wheat', volatility: 22, status: 'low' },
+  { name: 'Rice', volatility: 18, status: 'low' },
+  { name: 'Sugar', volatility: 12, status: 'stable' },
+]
+
+// ===== PRICE CHANGE DATA (for bar chart) =====
+export const priceChangeData = [
+  { name: 'Tomato', change: 12.3, fill: '#ef4444' },
+  { name: 'Onion', change: 8.5, fill: '#f97316' },
+  { name: 'Gold', change: 5.1, fill: '#f59e0b' },
+  { name: 'Crude', change: 4.2, fill: '#f59e0b' },
+  { name: 'Silver', change: 3.9, fill: '#eab308' },
+  { name: 'Petrol', change: 3.2, fill: '#eab308' },
+  { name: 'Diesel', change: 2.8, fill: '#84cc16' },
+  { name: 'Eggs', change: 2.1, fill: '#22c55e' },
+  { name: 'LPG', change: 1.5, fill: '#22c55e' },
+  { name: 'Wheat', change: 0.8, fill: '#10b981' },
+  { name: 'Sugar', change: -0.5, fill: '#06b6d4' },
+  { name: 'Rice', change: -1.2, fill: '#3b82f6' },
 ]

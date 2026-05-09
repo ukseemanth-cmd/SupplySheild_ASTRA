@@ -43,7 +43,7 @@ const MainLayout = () => {
           </div>
 
           <div className="text-muted text-sm">
-            © 2025 SupplyShield. Built for crisis intelligence.
+            © 2026 SupplyShield. Built for crisis intelligence.
           </div>
         </div>
       </footer>

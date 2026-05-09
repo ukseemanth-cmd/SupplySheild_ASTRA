@@ -285,7 +285,7 @@ const Awareness = () => {
             </h3>
             <ul className="space-y-4">
               {[
-                'Non-perishable grains (Rice, Wheat, Lentils)',
+                'Non-perishable grains (Rice, Lentils, Millets)',
                 'Cooking oil and essential spices',
                 'LPG backup or alternative fuel sources',
                 'Common medicines (Paracetamol, First-aid)',

@@ -1,214 +1,135 @@
-import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  AlertCircle, AlertTriangle, ShieldAlert, Bell, Filter, 
-  MapPin, Clock, ArrowRight, Zap, Info, ShieldCheck,
-  ChevronRight, Volume2, VolumeX, Search
-} from 'lucide-react'
 import { useState } from 'react'
+import { motion } from 'framer-motion'
+import {
+  AlertTriangle, Filter, Bell, ShieldAlert,
+  MapPin, Clock, ArrowUpRight, TrendingUp, Activity
+} from 'lucide-react'
 import GlassCard from '../components/ui/GlassCard'
+import DistributionChart from '../components/charts/DistributionChart'
 import { crisisAlerts } from '../data/mockData'
+
+const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 }
+const severityDistribution = [
+  { name: 'Critical', value: crisisAlerts.filter(a => a.severity === 'critical').length, color: '#ef4444' },
+  { name: 'High', value: crisisAlerts.filter(a => a.severity === 'high').length, color: '#f97316' },
+  { name: 'Medium', value: crisisAlerts.filter(a => a.severity === 'medium').length, color: '#f59e0b' },
+  { name: 'Low', value: crisisAlerts.filter(a => a.severity === 'low').length, color: '#22c55e' },
+]
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  visible: { opacity: 1, transition: { staggerChildren: 0.08 } }
 }
-
 const itemVariants = {
-  hidden: { opacity: 0, x: -20 },
-  visible: { opacity: 1, x: 0 }
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
 }
 
 const Alerts = () => {
-  const [filter, setFilter] = useState('all')
-  const [soundEnabled, setSoundEnabled] = useState(false)
+  const [filter, setFilter] = useState<string>('all')
 
-  const filteredAlerts = filter === 'all' 
-    ? crisisAlerts 
+  const filtered = filter === 'all'
+    ? crisisAlerts
     : crisisAlerts.filter(a => a.severity === filter)
+
+  const sorted = [...filtered].sort((a, b) =>
+    severityOrder[a.severity as keyof typeof severityOrder] - severityOrder[b.severity as keyof typeof severityOrder]
+  )
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6">
-      {/* Emergency Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-red-500 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-            </span>
-            <span className="text-xs font-bold text-red-500 uppercase tracking-widest">Live Emergency Feed</span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">
-            <span className="text-gradient">Intelligence Center</span>
-          </h1>
-        </div>
+      {/* Header */}
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
+          <span className="text-gradient">Crisis Alerts</span>
+        </h1>
+        <p className="text-muted text-lg max-w-2xl mx-auto">
+          Real-time monitoring of global events impacting supply chains and commodity prices.
+        </p>
+      </motion.div>
 
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={() => setSoundEnabled(!soundEnabled)}
-            className={`btn-icon ${soundEnabled ? 'text-primary border-primary/30 bg-primary/10' : ''}`}
+      {/* Stats + Severity Chart */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <GlassCard hoverEffect={false} className="text-center py-8">
+          <ShieldAlert className="w-8 h-8 text-red-400 mx-auto mb-3" />
+          <p className="text-3xl font-black text-red-400">{crisisAlerts.length}</p>
+          <p className="text-xs text-muted font-bold uppercase tracking-widest mt-1">Total Active Alerts</p>
+        </GlassCard>
+
+        <GlassCard hoverEffect={false} className="text-center py-8">
+          <TrendingUp className="w-8 h-8 text-amber-400 mx-auto mb-3" />
+          <p className="text-3xl font-black text-amber-400">
+            {crisisAlerts.filter(a => a.severity === 'critical' || a.severity === 'high').length}
+          </p>
+          <p className="text-xs text-muted font-bold uppercase tracking-widest mt-1">High Priority</p>
+        </GlassCard>
+
+        <GlassCard hoverEffect={false} className="p-4">
+          <p className="text-xs font-bold text-muted uppercase tracking-widest mb-2 text-center">Severity Breakdown</p>
+          <div className="h-[140px]">
+            <DistributionChart data={severityDistribution} />
+          </div>
+        </GlassCard>
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="flex flex-wrap gap-2 mb-8">
+        {['all', 'critical', 'high', 'medium', 'low'].map(f => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border ${
+              filter === f
+                ? 'bg-primary/20 border-primary/40 text-primary'
+                : 'bg-white/[0.03] border-white/[0.08] text-muted hover:text-white hover:bg-white/[0.06]'
+            }`}
           >
-            {soundEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+            {f === 'all' ? `All (${crisisAlerts.length})` : `${f} (${crisisAlerts.filter(a => a.severity === f).length})`}
           </button>
-          <div className="bg-white/5 border border-white/10 rounded-xl p-1 flex">
-            {['all', 'critical', 'high', 'medium'].map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  filter === f 
-                    ? 'bg-primary text-white shadow-lg shadow-primary/20' 
-                    : 'text-muted hover:text-white'
-                }`}
-              >
-                {f.toUpperCase()}
-              </button>
-            ))}
-          </div>
-        </div>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Column: Live Feed */}
-        <div className="lg:col-span-8 space-y-4">
-          <AnimatePresence mode="popLayout">
-            {filteredAlerts.map((alert) => (
-              <motion.div
-                key={alert.id}
-                layout
-                variants={itemVariants}
-                initial="hidden"
-                animate="visible"
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="group"
-              >
-                <GlassCard className={`p-0 overflow-hidden border-l-4 ${
-                  alert.severity === 'critical' ? 'border-l-red-500' :
-                  alert.severity === 'high' ? 'border-l-orange-500' :
-                  alert.severity === 'medium' ? 'border-l-yellow-500' : 'border-l-green-500'
+      {/* Alert Cards */}
+      <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-4 mb-16">
+        {sorted.map((alert, i) => (
+          <motion.div key={alert.id} variants={itemVariants}>
+            <div className={`glass-card p-6 border-l-4 hover:border-l-[6px] transition-all ${
+              alert.severity === 'critical' ? 'border-l-red-500' :
+              alert.severity === 'high' ? 'border-l-orange-500' :
+              alert.severity === 'medium' ? 'border-l-yellow-500' : 'border-l-green-500'
+            }`}>
+              <div className="flex flex-col md:flex-row md:items-start gap-4">
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${
+                  alert.severity === 'critical' ? 'bg-red-500/10 text-red-400' :
+                  alert.severity === 'high' ? 'bg-orange-500/10 text-orange-400' :
+                  alert.severity === 'medium' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-green-500/10 text-green-400'
                 }`}>
-                  <div className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${
-                          alert.severity === 'critical' ? 'bg-red-500/10 text-red-400' :
-                          alert.severity === 'high' ? 'bg-orange-500/10 text-orange-400' :
-                          'bg-blue-500/10 text-blue-400'
-                        }`}>
-                          {alert.severity === 'critical' ? <ShieldAlert className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-bold group-hover:text-primary transition-colors">{alert.title}</h3>
-                          <div className="flex items-center gap-3 text-xs text-muted mt-1">
-                            <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {alert.region}</span>
-                            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {alert.time}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className={`text-xs font-black uppercase tracking-tighter px-2 py-1 rounded ${
-                        alert.severity === 'critical' ? 'bg-red-500/20 text-red-400' :
-                        alert.severity === 'high' ? 'bg-orange-500/20 text-orange-400' :
-                        'bg-yellow-500/20 text-yellow-400'
-                      }`}>
-                        {alert.severity}
-                      </div>
-                    </div>
-                    
-                    <p className="text-sm text-white/80 leading-relaxed mb-6">
-                      {alert.description}
-                    </p>
-
-                    <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-white/5">
-                      <div className="flex gap-4">
-                         <div>
-                            <p className="text-[10px] uppercase font-bold text-muted mb-1">Affected Commodity</p>
-                            <p className="text-xs font-bold text-white">{alert.commodity}</p>
-                         </div>
-                         <div>
-                            <p className="text-[10px] uppercase font-bold text-muted mb-1">Price Impact</p>
-                            <p className="text-xs font-bold text-red-400">{alert.impact}</p>
-                         </div>
-                      </div>
-                      <button className="flex items-center gap-1 text-xs font-bold text-primary group-hover:gap-2 transition-all">
-                        DETAILED ANALYSIS <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </GlassCard>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-
-        {/* Right Column: Insights & Stats */}
-        <div className="lg:col-span-4 space-y-6">
-          {/* Quick Stats */}
-          <GlassCard className="p-6" hoverEffect={false}>
-            <h3 className="text-sm font-bold uppercase tracking-widest text-muted mb-6">Emergency Status</h3>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-white/70">Total Active Alerts</span>
-                <span className="text-lg font-bold">12</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-white/70">Critical Level</span>
-                <span className="text-lg font-bold text-red-400">3</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-white/70">Regions Impacted</span>
-                <span className="text-lg font-bold">8</span>
-              </div>
-            </div>
-            
-            <div className="mt-8 p-4 rounded-xl bg-primary/10 border border-primary/20">
-               <div className="flex items-center gap-2 mb-2 text-primary">
-                  <Zap className="w-4 h-4" />
-                  <span className="text-xs font-bold uppercase">AI Prediction</span>
-               </div>
-               <p className="text-xs text-white/80 leading-relaxed">
-                  Probability of secondary price hikes in logistics sector has increased by <span className="text-primary font-bold">18%</span> in the last 24 hours.
-               </p>
-            </div>
-          </GlassCard>
-
-          {/* Watchlist Alerts */}
-          <GlassCard className="p-6" hoverEffect={false}>
-            <h3 className="text-sm font-bold uppercase tracking-widest text-muted mb-6">Smart Watchlist</h3>
-            <div className="space-y-4">
-              {[
-                { name: 'Petroleum', risk: 'Critical', color: 'text-red-400' },
-                { name: 'Semiconductors', risk: 'High', color: 'text-orange-400' },
-                { name: 'Wheat', risk: 'Medium', color: 'text-yellow-400' },
-              ].map(item => (
-                <div key={item.name} className="flex justify-between items-center p-3 rounded-lg bg-white/5 border border-white/10">
-                  <span className="text-sm font-bold">{item.name}</span>
-                  <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded bg-white/5 ${item.color}`}>{item.risk}</span>
+                  <AlertTriangle className="w-6 h-6" />
                 </div>
-              ))}
-            </div>
-            <button className="w-full mt-6 py-2.5 text-xs font-bold text-primary border border-primary/20 rounded-xl hover:bg-primary/5 transition-all">
-              MANAGE WATCHLIST
-            </button>
-          </GlassCard>
 
-          {/* AI Explanation Card */}
-          <GlassCard className="p-6 bg-gradient-to-br from-blue-600/20 to-purple-600/20 border-primary/30">
-            <h3 className="text-sm font-bold flex items-center gap-2 mb-4">
-              <ShieldCheck className="w-4 h-4 text-primary" />
-              AI Crisis Summarizer
-            </h3>
-            <p className="text-xs text-white/70 leading-relaxed mb-4 italic">
-              "Current market volatility is primarily driven by three converging factors: Red Sea shipping delays, record droughts in Brazil, and seasonal demand surges in South-East Asia."
-            </p>
-            <div className="flex items-center gap-2">
-              <div className="flex -space-x-2">
-                 {[1,2,3].map(i => <div key={i} className="w-6 h-6 rounded-full bg-white/10 border-2 border-background" />)}
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-3 mb-2">
+                    <h3 className="text-lg font-bold">{alert.title}</h3>
+                    <span className={`badge ${
+                      alert.severity === 'critical' ? 'badge-critical' :
+                      alert.severity === 'high' ? 'badge-high' :
+                      alert.severity === 'medium' ? 'badge-medium' : 'badge-low'
+                    }`}>
+                      {alert.severity.toUpperCase()}
+                    </span>
+                  </div>
+                  <p className="text-sm text-white/70 leading-relaxed mb-3">{alert.description}</p>
+                  <div className="flex flex-wrap gap-4 text-xs text-muted">
+                    <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {alert.region}</span>
+                    <span className="flex items-center gap-1"><Activity className="w-3 h-3" /> {alert.commodity}</span>
+                    <span className="flex items-center gap-1 text-red-400 font-bold"><ArrowUpRight className="w-3 h-3" /> {alert.impact}</span>
+                  </div>
+                </div>
               </div>
-              <span className="text-[10px] text-muted">Trusted by 2.4k users</span>
             </div>
-          </GlassCard>
-        </div>
-      </div>
+          </motion.div>
+        ))}
+      </motion.div>
     </div>
   )
 }

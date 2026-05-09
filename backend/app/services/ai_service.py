@@ -1,44 +1,69 @@
-import pandas as pd
-import numpy as np
-from prophet import Prophet
-from sklearn.linear_model import LinearRegression
+import os
+import httpx
+from typing import Optional
 
-class AIService:
-    def __init__(self):
-        pass
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
-    def predict_price(self, commodity_id: int):
-        """
-        Dummy prediction logic using Prophet-like structure.
-        In a real app, this would load historical data from DB.
-        """
-        # Mock historical data
-        df = pd.DataFrame({
-            'ds': pd.date_range(start='2024-01-01', periods=10, freq='M'),
-            'y': [40, 45, 42, 50, 75, 85, 65, 70, 75, 80]
-        })
-        
-        # In real scenario: model = Prophet().fit(df)
-        # forecast = model.predict(future)
-        
-        return 105.4  # Mock result
 
-    def generate_explanation(self, commodity_id: int, context: str):
-        """
-        Generate human-readable explanations for price changes.
-        In real scenario, this would call Groq API.
-        """
-        explanations = {
-            1: f"Petroleum prices may rise due to crude oil instability and {context}.",
-            2: f"LPG prices are stabilizing, but monitor {context} for potential spikes.",
-            3: f"Tomato prices are highly volatile due to seasonal weather patterns and {context}."
+async def get_ai_explanation(
+    commodity_name: str,
+    current_price: float,
+    price_change_pct: float,
+    historical_summary: str = "",
+    prediction_summary: str = "",
+) -> dict:
+    """
+    Use Groq LLM to generate an AI explanation of commodity price trends.
+    Returns a structured response with the explanation text.
+    """
+    if not GROQ_API_KEY:
+        return {
+            "explanation": "AI service unavailable — GROQ_API_KEY not configured.",
+            "model": "none",
+            "error": True,
         }
-        return explanations.get(commodity_id, f"Price change driven by {context}.")
 
-    def analyze_risk(self, commodity_id: int, weather_data: dict, news_sentiment: float):
-        """
-        Combine multiple signals to calculate risk level.
-        """
-        # Logic to combine weather hazards, news, and trade data
-        risk_score = (weather_data.get('severity', 0) * 0.6) + (abs(news_sentiment) * 0.4)
-        return "high" if risk_score > 0.7 else "medium"
+    prompt = f"""You are SupplyShield AI, an expert commodity analyst specializing in Indian markets in 2026.
+
+Commodity: {commodity_name}
+Current Price: {current_price}
+Recent Change: {price_change_pct:+.1f}%
+Historical Data: {historical_summary}
+AI Predictions: {prediction_summary}
+
+Provide a concise analysis (150 words max) covering:
+1. Why prices moved this way (key drivers)
+2. Risk factors for the next 3-4 months in 2026
+3. One actionable tip for Indian consumers
+
+Use bullet points. Be specific to Indian context. Reference real-world events like monsoons, OPEC, trade policies."""
+
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                GROQ_API_URL,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {GROQ_API_KEY}",
+                },
+                json={
+                    "model": "llama-3.1-8b-instant",
+                    "messages": [{"role": "user", "content": prompt}],
+                    "temperature": 0.7,
+                    "max_tokens": 300,
+                },
+            )
+            data = response.json()
+            explanation = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+            return {
+                "explanation": explanation or "Unable to generate analysis.",
+                "model": "llama-3.1-8b-instant",
+                "error": False,
+            }
+    except Exception as e:
+        return {
+            "explanation": f"AI service error: {str(e)}",
+            "model": "none",
+            "error": True,
+        }
